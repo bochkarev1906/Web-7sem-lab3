@@ -1,0 +1,228 @@
+body {
+    margin: 0 2% 2% 2%;
+    font-size: 16pt;
+    background-color: rgb(131, 201, 135);
+    color: rgb(0, 0, 0);
+}
+ul{
+    padding: 0;
+    margin-top: 0;
+}
+h2{
+    color: black;
+    font-size: 24pt;
+    text-align: center;
+}
+h3{
+    font-size: 1.5em;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+}
+.loading{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+.loading-icon{
+    width: 70px;
+    height: 70px;
+}
+.header{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.title{
+    font-size: 30pt;
+    font-weight: 400;
+    text-align: left;
+}
+.update-button{
+    font-size: 14pt;
+    cursor: pointer;
+    margin-left: 32%; 
+    padding: 10px;
+    background: rgb(255, 255, 255);  
+}
+.update-media{
+    display: none;
+}
+.weather-here{
+    display: flex;
+    justify-content: space-between;
+}
+.weather-here-info{
+    width: calc(1/2 * 100% - (1 - 1/2) * 6%);
+}
+.main{
+    display: flex;
+    justify-content: space-between;
+}
+.weather-here-info .icon-weather{
+    width: 120px;
+    height: 120px;
+}
+.weather-here-info .temperature{
+    font-size: 76pt;
+}
+.data-ul{
+    width: calc(1/2 * 100% - (1 - 1/2) * 6%);
+}
+.wind-param, .clouds-param, .pressure-param, .humidity-param, .coordinates-param{
+    margin-bottom: 8px;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    list-style-type: none;
+}
+.name-param{
+    font-weight: bold;
+}
+.favorites-main{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.add-city{
+    display: flex;
+    align-items: center;
+}
+.favorites-header{
+    display: flex;
+    justify-content: space-between;
+}
+.input{
+    width: 100%;
+    background: rgb(255, 255, 255);
+    cursor: text;
+    padding: 8px;
+}
+.add-city-icon{
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+}
+.add-button{
+    border: 0; 
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 5px;
+}
+.cities{
+    display: flex; 
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.weather-city{
+    display: flex;
+    flex-direction: column;
+    width: calc(1/2 * 100% - (1 - 1/2) * 6%);
+}
+.weather-city .icon-weather{
+    width: 60px;
+    height: 60px;
+}
+.weather-city .temperature{
+    font-size: 20pt;
+    font-weight: bold;
+}
+.weather-city-list {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.favorites-main{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.icon-delete{
+    width: 50px;
+    height: 50px;
+}
+.delete-button{
+    border: 0; 
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+@media only screen and (max-width: 1000px) and (min-width: 721px) { 
+    body {
+        font-size: 14pt;
+    }
+    h2{
+        font-size: 24pt;
+    }
+    h3{
+        font-size: 17pt;
+    }
+    .weather-here-city .temperature{
+        font-size: 30pt;
+        font-weight: bold;
+    }
+    .weather-city .temperature{
+        font-size: 15pt;
+    }
+    .add-city-icon{
+        width: 34px;
+        height: 34px;
+    }
+    .icon-weather{
+        width: 40px;
+        height: 40px;
+    }
+    .icon-delete{
+        width: 36px;
+        height: 36px;
+    }
+}
+@media only screen and (max-width: 720px) {
+    body {
+        margin: 0 5% 5% 5%;
+    }
+    .update-button{
+        display: none;
+    }
+    .update-img{
+        width: 50px;
+        height: 50px;
+    }
+    .update-media{
+        display: block;
+        margin-left: 5%;
+        border: 0; 
+        background: transparent;
+        cursor: pointer;
+        padding: 0;
+    }
+    .weather-here{
+        display: flex;
+        flex-direction: column;
+    }
+    .weather-here-info{
+        width: 100%;
+    }
+    .data-ul{
+        width: 100%;
+    }
+    .favorites-header{
+        display: flex;
+        flex-direction: column;
+    }
+    .input{
+        display: inline-block;
+        width: 100%;
+    }
+    .add-city-icon{
+        display: inline-block;
+        width: 34px;
+        height: 34px;
+    }
+    .weather-city{
+        width: 100%;
+    }
+}

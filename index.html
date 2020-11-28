@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Lab2_web_dev">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="js/openWeatherAPI.js"></script>
+    <script type="text/javascript" src="js/funcs.js"></script>
+    <title>Погода</title>
+</head>
+<body>
+    <main>
+        <section class="header">
+            <h1 class="title">Погода здесь</h1>
+            <button class="update-button" type="button">Обновить геолокацию</button>
+            <button class="update-media"><img class="update-img" src="img/update.png" alt="Обновить геолокацию"></button>
+        </section> 
+        <section class="weather-here"></section>
+        <section class="favorites-header">
+            <h2 class="title">Избранное</h2>
+            <form class="add-city">
+                <input id="add-city-input" type="search" class="input" placeholder="Добавить новый город">
+                <button class="add-button" type="submit"><img class="add-city-icon" src="img/add.png" alt="Добавить новый город"></button>
+            </form>
+        </section>
+        <ul class="weather-city-list"></ul>
+    </main>
+    <template id="weather-here">
+        <section class="weather-here-info">
+            <h2 class="name-city"></h2>
+            <section class="main">
+                <img class="icon-weather" src="" alt="Погода">
+                <div class="temperature"></div>
+            </section>
+        </section>
+        <ul class="data-ul">
+            <li class="wind-param">
+                <span class="name-param">Ветер</span>
+                <span class="value-param"></span>
+            </li>
+            <li class="clouds-param">
+                <span class="name-param">Облачность</span>
+                <span class="value-param"></span>
+            </li>
+            <li class="pressure-param">
+                <span class="name-param">Давление</span>
+                <span class="value-param"></span>
+            </li>
+            <li class="humidity-param">
+                <span class="name-param">Влажность</span>
+                <span class="value-param"></span>
+            </li>
+            <li class="coordinates-param">
+                <span class="name-param">Координаты</span>
+                <span class="value-param"></span>
+            </li>
+        </ul>
+    </template>
+    <template id="weather-here-loading">
+        <section class="loading">
+            <h3>Подождите, данные загружаются...</h3>
+            <img class="loading-icon" src='img/loading.png' alt="Загрузка данных">
+        </section>
+    </template>
+    <template id="weather-city">
+        <li class="weather-city">
+            <section class="favorites-main">
+                <h3 class="name-city"></h3>
+                <div class="temperature"></div>
+                <img class="icon-weather" src="" alt="">
+                <button class="delete-button"><img class="icon-delete" src="img/delete.png" alt="Удалить город"></button>
+            </section>
+            <ul>
+                <li class="wind-param">
+                    <span class="name-param">Ветер</span>
+                    <span class="value-param"></span>
+                </li>
+                <li class="clouds-param">
+                    <span class="name-param">Облачность</span>
+                    <span class="value-param"></span>
+                </li>
+                <li class="pressure-param">
+                    <span class="name-param">Давление</span>
+                    <span class="value-param"></span>
+                </li>
+                <li class="humidity-param">
+                    <span class="name-param">Влажность</span>
+                    <span class="value-param"></span>
+                </li>
+                <li class="coordinates-param">
+                    <span class="name-param">Координаты</span>
+                    <span class="value-param"></span>
+                </li>
+            </ul>
+        </li>
+    </template>
+    <template id="weather-city-loading">
+        <li class="weather-city">
+            <section class="weather-city">
+                <h3 class="name-city"></h3>
+            </section>
+            <section class="weather-details">
+                <section class="loading">
+                    <h3>Подождите, данные загружаются...</h3>
+                    <img class="loading-icon" src='img/loading.png' alt="Загрузка данных">
+                </section>
+            </section>
+        </li>
+    </template>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
