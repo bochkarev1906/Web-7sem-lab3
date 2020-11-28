@@ -1,3 +1,5 @@
+const localURL = 'http://localhost:3000';
+
 const refreshWeatherHere = () =>{
     weatherHere.innerHTML = ""
     const loadingCity = weatherHereLoading()
@@ -31,7 +33,7 @@ const weatherHereShow = (weather) => {
     return newWeatherHere
 }
 const loadWeatherFavorites = () => {
-    const favoritesList = JSON.parse(localStorage.getItem('favoritesList'))
+    /*const favoritesList = JSON.parse(localStorage.getItem('favoritesList'))
     let citiesToLoad = []
     for (const i in favoritesList) {
         const cityName = favoritesList[i]
@@ -46,7 +48,28 @@ const loadWeatherFavorites = () => {
                 weatherCityFavorites.replaceChild(weatherCityShow(weather), newCityElement))
             .catch(() => alert('Что-то пошло не так... Пожалуйста, обновите страницу'))
     })
-}
+}*/
+    fetch(`${localURL}/favourites`).then(resp => resp.json()).then(data => {
+        favoritesList = data ? data : [];
+        let citiesToLoad = []
+        for (const i in favoritesList) {
+            const cityName = favoritesList[i]
+            if (!weatherCityFavorites.querySelector(`.weather-city[cityName=${cityName}]`))
+                citiesToLoad.push(cityName)
+        }
+        citiesToLoad.forEach(cityToLoad => {
+            weatherCityFavorites.append(weatherCityLoading(cityToLoad))
+            const newCityElement = weatherCityFavorites.querySelector(`.weather-city[cityName=${cityToLoad}]`)
+            openWeatherAPI.getByNameOfCity(cityToLoad)
+                .then(weather => 
+                    weatherCityFavorites.replaceChild(weatherCityShow(weather), newCityElement))
+                .catch(() => alert('Что-то пошло не так... Пожалуйста, обновите страницу'))
+        })
+    })
+    .catch(err => {});
+};
+
+
 const weatherCityLoading = (cityName) => {
     const weatherCityLoadingTemp = document.querySelector('template#weather-city-loading')
     const newWeatherCityLoading = document.importNode(weatherCityLoadingTemp.content, true)
@@ -96,43 +119,50 @@ const addToFavorites = async event => {
         const cityName = cityName1[0].toUpperCase() + cityName1.slice(1);
         event.currentTarget.firstElementChild.value = ''
         let cityExisted = false;
-        const listStorage = JSON.parse(localStorage.getItem('favoritesList'));
-        for (var i = 0; i < listStorage.length; i++){
-            if (listStorage[i] === cityName) {
-                cityExisted = true;
+        for (const cityElement of weatherCityFavorites.children) {
+            const thisCity = cityElement.querySelector('.city-name').innerText
+            if (cityName.split('_').join(' ') === thisCity){
                 alert('Этот город уже есть в избранном')
-                break;
+                cityExisted = true
+                break
             }
         }
         if (cityExisted === false){
             weatherCityFavorites.append(weatherCityLoading(cityName))
-            const response = await openWeatherAPI.getByNameOfCity(cityName)
-            if (response.cod === 200) {
-                const favoritesList = JSON.parse(localStorage.getItem('favoritesList'))
-                localStorage.setItem('favoritesList', JSON.stringify([cityName, ...favoritesList]))
-                const loading = weatherCityFavorites.querySelector(`.weather-city[cityName=${cityName}]`)
-                weatherCityFavorites.replaceChild(weatherCityShow(response), loading)
-            } 
-            else{
-                if (response.cod === '404'){
-                    alert(`${cityName} не найден`)
+            fetch(`${baseURL}/weather/city?q=${cityName.split('_').join(' ')}`).then(resp => resp.json()).then(data => {
+                if (data.name !== undefined) {
+                    putFavoriteCity(data, cityName);
+                } 
+                else {
+                    alert(`${cityName} не найден!`);
                     const loading = weatherCityFavorites.querySelector(`.weather-city[cityName=${cityName}]`)
                     weatherCityFavorites.removeChild(loading)
-                } 
-            } 
+                }
+            })
+            .catch(err => alert(err))
         }
     }
 }
 const deleteFromFavorites = event => {
     const thisCityName = event.currentTarget.parentElement.firstElementChild.innerHTML
-    const favoritesList = JSON.parse(localStorage.getItem('favoritesList').split('_').join(' '))
-    localStorage.setItem('favoritesList', JSON.stringify(favoritesList.filter(cityName => cityName !== thisCityName)))
+    fetch(`${baseURL}/favourites`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+        },
+        body: `name=${thisCityName}`
+    })
+    .then(resp => resp.json())
+    .then(() => {})
+    .catch(err => {
+        alert(err);
+        alert("Город не был удалён");
+    });
     let citiesToRemove = []
-    const favoritesList1 = JSON.parse(localStorage.getItem('favoritesList').split('_').join(' '))
     for (const cityElement of weatherCityFavorites.children) {
-        const thisCityName = cityElement.querySelector('.name-city').innerText
-        if (!(favoritesList1.includes(thisCityName)))
-            citiesToRemove.push(cityElement)
+        const thisCity = cityElement.querySelector('.city-name').innerText
+        if (thisCityName === thisCity)
+            citiesElementToRemove.push(cityElement)
     }
     citiesToRemove.forEach(cityToRemove => weatherCityFavorites.removeChild(cityToRemove))
 }
