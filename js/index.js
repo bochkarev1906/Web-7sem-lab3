@@ -8,11 +8,34 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const MongoClient = require('mongodb').MongoClient;
 
-MongoClient.connect(connectionDB, (err, database) => {
+app.use(bodyParser.urlencoded({ extended: true }));
+app.get('/weather/city', (req, res) => {
+	request.get(`${siteURL}?q=${req.query.q}&appid=${apiKey}&units=metric`, (error, response, body) => {
+		if (response !== null && response.statusCode === 404){
+			res.setHeader('Access-Control-Allow-Origin', '*');
+			res.setHeader('content-type', 'application/json; charset=utf-8');
+			return res.status(404).send(body);
+		}
+		else{
+			return sendRes(res, error, body);
+		}
+	});
+});	
+
+app.get('/weather/coordinates', (req, res) => {
+	request.get(`${siteURL}?lat=${req.query.lat}&lon=${req.query.lon}&appid=${apiKey}&units=metric`, (err, response, body) => {
+		return sendRes(res, err, body);
+	});
+});
+
+MongoClient.connect(connectionDB, { useUnifiedTopology: true }, (err, database) => {
 	if (err) {
 		return console.log(err)
 	}
-	
+
+	global.DB = database.db()
+	console.log('Соединение с БД установлено!')
+
 	app.options('*', (req, res) => {
 		res.set('Access-Control-Allow-Origin', '*');
 		res.set('Access-Control-Allow-Headers', 'Content-Type');
@@ -21,55 +44,41 @@ MongoClient.connect(connectionDB, (err, database) => {
 		res.send('ok');
 	});
 
-    app.use(bodyParser.urlencoded({ extended: true }));
-	console.log('Соединение с БД установлено!')
-    
-    app.get('/weather/city', (req, res) => {
-		request(`${siteURL}?q=${req.query.q}&appid=${apiKey}&units=metric`, (error, response, body) => {
-			return sendRes(res, err, body);
-		});
-	});	
-
-	app.get('/weather/coordinates', (req, res) => {
-		request(`${siteURL}?lat=${req.query.lat}&lon=${req.query.lon}&appid=${apiKey}&units=metric`, (err, response, body) => {
-			return sendRes(res, err, body);
-		});
-	});
-
-	app.delete('/favourites', (req, res) => {
-		db = database.db();
-		db.collection('cities').deleteOne({name: req.body.name}, (err, results) => {
-			sendRes(res, err, JSON.stringify('Город удален из избранного!'))
-		})
-	});
-
-	app.get('/favourites', (req, res) => {
-		res.setHeader('Access-Control-Allow-Origin', '*');
-		res.setHeader('content-type', 'application/json; charset=utf-8');
-		db = database.db();
-		db.collection('cities').find({}).toArray((err, items) => {
-			results = null;
-			if (!err) {
-				results = [];
-				for (item of items) {
-					results.push(item.name)
-				}
-			}
-			sendRes(res, err, results);	
-		});
-	});
-
-	app.post('/favourites', (req, res) => {
-		db = database.db();
-		db.collection('cities').insertOne(req.body, (err, results) => {
-			sendRes(res, err, err ? null : results.ops[0])
-		});
-	});
 
 	app.listen(port, () => {
 		console.log('Слушаем порт ' + port);
 	});               
 })
+
+app.delete('/favourites', (req, res) => {
+	db=global.DB
+	db.collection('cities').deleteOne({name: req.body.name}, (err, results) => {
+		sendRes(res, err, req.body)
+	})
+});
+
+app.get('/favourites', (req, res) => {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('content-type', 'application/json; charset=utf-8');
+	db=global.DB
+	db.collection('cities').find({}).toArray((err, items) => {
+		results = null;
+		if (!err) {
+			results = [];
+			for (item of items) {
+				results.push(item.name)
+			}
+		}
+		sendRes(res, err, results);	
+	});
+});
+
+app.post('/favourites', (req, res) => {
+	db = global.DB;
+	db.collection('cities').insertOne(req.body, (err, results) => {
+		sendRes(res, err, err ? null : results.ops[0])
+	});
+});
 
 function sendRes(res, err, ok) {
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -79,3 +88,5 @@ function sendRes(res, err, ok) {
 	}
 	return res.send(ok);	
 }
+
+module.exports = app
